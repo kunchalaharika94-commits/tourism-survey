@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tourist Survey</title>
+
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #74ebd5, #9face6);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+      }
+
+      .container {
+        background: #fff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        width: 500px;
+        max-width: 95%;
+      }
+
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        background-color: #28a745;
+      }
+
+      label {
+        font-weight: bold;
+        display: block;
+        margin-top: 12px;
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        padding: 10px;
+        margin-top: 6px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+      }
+
+      textarea {
+        resize: none;
+      }
+
+      .options label {
+        font-weight: normal;
+        display: block;
+        margin-top: 5px;
+      }
+
+      button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 20px;
+        background: #28a745;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #218838;
+      }
+
+      .section {
+        display: none;
+      }
+
+      .section.active {
+        display: block;
+      }
+
+      .thank-you {
+        text-align: center;
+        display: none;
+      }
+
+      .thank-you h2 {
+        color: #2e7d32;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+
+      <!-- SECTION 1: PERSONAL INFO -->
+      <div class="section active" id="section1">
+        <h2>Personal Information</h2>
+
+        <label>Full Name</label>
+        <input type="text" id="name" />
+
+        <label>Email</label>
+        <input type="email" id="email" />
+
+        <label>Phone</label>
+        <input type="tel" id="phone" pattern="[0-9]{10}" />
+
+        <label>Address</label>
+        <textarea id="address" rows="3"></textarea>
+
+        <button onclick="goToSurvey()">Next</button>
+      </div>
+
+      <!-- SECTION 2: SURVEY -->
+      <div class="section" id="section2">
+        <h2>Tourist Place Survey</h2>
+
+        <div id="questions"></div>
+
+        <button onclick="goToFinal()">Next</button>
+      </div>
+
+      <!-- SECTION 3: FINAL FEEDBACK -->
+      <div class="section" id="section3">
+        <form id="finalForm">
+          <h2>Overall Experience</h2>
+
+          <label>Overall Rating</label>
+          <select id="overallRating">
+            <option value="">Select rating</option>
+            <option value="1">1 - Very Poor</option>
+            <option value="2">2 - Poor</option>
+            <option value="3">3 - Good</option>
+            <option value="4">4 - Very Good</option>
+            <option value="5">5 - Excellent</option>
+          </select>
+
+          <label>Your Comments</label>
+          <textarea id="comments" rows="4"></textarea>
+
+          <button type="submit">Submit Feedback</button>
+        </form>
+
+        <div class="thank-you" id="thankYou">
+          <h2> Thank You!</h2>
+          <img src="thank.png" alt="thank card" width="100px"/>
+          <p>Your feedback has been submitted successfully.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+      const questions = [
+        "How would you rate the cleanliness?",
+        "How would you rate the hospitality?",
+        "How was the food quality?",
+        "How would you rate the accessibility?",
+        "How was the safety?",
+        "How scenic was the place?",
+        "How enjoyable was the experience?",
+        "How would you rate the staff?",
+        "How well-maintained were the facilities?",
+        "Would you recommend this place?",
+        "How was the climate?",
+        "How comfortable was the temperature?",
+        "how would you rate the crowd experience?"
+      ];
+
+      const questionsDiv = document.getElementById("questions");
+
+      questions.forEach((q, i) => {
+        let html = `<label>${i + 1}. ${q}</label><div class="options">`;
+        for (let j = 1; j <= 5; j++) {
+          if(j==1)
+          html += `
+        <label>
+        <input type="radio" name="q${i + 1}" value="${j}"> ${j}- Very Bad</label>`;
+          if(j==2)
+          html += `<label>
+        <input type="radio" name="q${i + 1}" value="${j}"> ${j}- Bad</label>`;
+          if(j==3)
+          html += `<label>
+        <input type="radio" name="q${i + 1}" value="${j}"> ${j}- Good</label>`;
+          if(j==4)
+          html += `<label>
+        <input type="radio" name="q${i + 1}" value="${j}"> ${j}- Very Good</label>`;
+          if(j==5)
+          html += `<label>
+        <input type="radio" name="q${i + 1}" value="${j}"> ${j}- Excellent</label>`;
+        }
+        html += "</div>";
+        questionsDiv.innerHTML += html;
+      });
+
+      function showSection(id) {
+        document.querySelectorAll(".section").forEach(sec => sec.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
+      }
+
+    function goToSurvey() {
+        const name = document.getElementById("name").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const address = document.getElementById("address").value.trim();
+
+        if (!name || !email || !phone || !address) {
+            alert("Please fill all fields");
+            return;
+        }
+
+        localStorage.setItem(
+            "personalInfo",
+            JSON.stringify({ name, email, phone, address })
+        );
+
+        showSection("section2");
+    }
+
+
+      function goToFinal() {
+        let surveyData = {};
+        for (let i = 1; i <= 12; i++) {
+          const selected = document.querySelector(`input[name="q${i}"]:checked`);
+          if (!selected) {
+            alert(`Please answer question ${i}`);
+            return;
+          }
+          surveyData["q" + i] = selected.value;
+        }
+        localStorage.setItem("surveyData", JSON.stringify(surveyData));
+        showSection("section3");
+      }
+
+      document.getElementById("finalForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const rating = document.getElementById("overallRating").value;
+        if (!rating) {
+          alert("Please select overall rating");
+          return;
+        }
+
+        localStorage.setItem("finalFeedback", JSON.stringify({
+          rating,
+          comments: document.getElementById("comments").value
+        }));
+
+        this.style.display = "none";
+        document.getElementById("thankYou").style.display = "block";
+      });
+    </script>
+  </body>
+</html>
